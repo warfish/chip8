@@ -21,7 +21,7 @@
 
 
 // Fetch next opcode
-//#define CHIP8_FETCH(__chip8__) 				((uint16_t)((__chip8__)->mem[(__chip8__)->PC++] << 8) | (__chip8__)->mem[(__chip8__)->PC++])
+#define CHIP8_FETCH(__chip8__) 			((uint16_t)((__chip8__)->mem[(__chip8__)->PC++] << 8) | (__chip8__)->mem[(__chip8__)->PC++])
 
 // Advace by a number of opcodes
 #define CHIP8_SKIP(__chip8__, __ops__) 		((__chip8__)->PC += CHIP8_OPCODE_SIZE * (__ops__))
@@ -36,7 +36,7 @@
 
 // Stack 
 #define CHIP8_PUSH(__chip8__, __value__)	((__chip8__)->mem[(__chip8__)->SP++] = (__value__))
-#define CHIP8_POP(__chip8__)				((__chip8__)->mem[(__chip8__)->SP--])
+#define CHIP8_POP(__chip8__)			((__chip8__)->mem[(__chip8__)->SP--])
 
 
 static uint8_t g_chip8_fontset[] =
@@ -64,21 +64,6 @@ static uint8_t g_chip8_fontset[] =
 // sprite data is stored at addr.
 static void draw_sprite(struct chip8_t* chip8, unsigned x, unsigned y, unsigned height, uint16_t addr)
 {
-/* 
-	uint8_t* src = chip8->mem + addr;
-	uint8_t* dst = chip8->mem + CHIP8_VIDEO_OFFSET + y * 8 + x;
-
-	chip8->V[CHIP8_VF] = 0; // Flag will be set if there is a collision
-	
-	while (heigth--)
-	{
-		// sprite lines are drawn by xoring existing video memory data with the new 8-bit pixel line. each pixel is represented by 1 bit.
-		// if a bit at existing video memory will be flipped this means a collision that needs to be marked in VF.
-		// XOR will flip a bit to 0 only if both bits are set so we will mask those out and see if any are left
-		chip8->V[CHIP8_VF] = (*src & *dst) != 0;
-		*dst++ ^= *src++;
-	}
-*/
 	uint8_t* src = chip8->mem + addr;
 
 	for (unsigned yline = 0; yline < height; ++yline)
@@ -94,24 +79,6 @@ static void draw_sprite(struct chip8_t* chip8, unsigned x, unsigned y, unsigned 
 	}
 
 	chip8->video_update = 1;
-/*
-	for (unsigned y = 0; y < height; ++y)
-  	{
-    	line = chip8->mem[addr + y];
-    	for(int xline = 0; xline < 8; xline++)
-    	{
-      		if((pixel & (0x80 >> xline)) != 0)
-      		{
-        		if(chip8->mem[CHIP8_VIDEO_OFFSET + (x + xline + ((y + yline) * 64))] == 1)
-				{
-          			chip8->V[CHIP8_VF] = 1;                                 
-        		}
-
-				chip8->mem[CHIP8_VIDEO_OFFSET + (x + xline + ((y + yline) * 64))] ^= 1;
-      		}
-    	}
-  	}
-*/
 }
 
 
@@ -147,15 +114,10 @@ int chip8_exec(struct chip8_t* chip8, uint16_t opcode)
 			return ENOTSUP;
 
 		case 0x00E0: /* clear screen */
-			//memset(chip8->mem + CHIP8_VIDEO_OFFSET, 0, CHIP8_VIDEO_MEM_SIZE);
 			memset(chip8->video_mem, 0, sizeof(chip8->video_mem));
 			break;
 
 		case 0x00EE: /* return */
-	/*  
-			chip8->PC = CHIP8_POP(chip8);
-			chip8->PC |= CHIP8_POP(chip8) << 8;
-	*/
 			chip8->PC = chip8->call_stack[chip8->SP--];
 			break;
 
@@ -169,18 +131,6 @@ int chip8_exec(struct chip8_t* chip8, uint16_t opcode)
 		break;
 
 	case 0x2000: /* call to NNN */
-		// Check that we have enough stack depth left
-	/*  
-		if ((chip8->SP - CHIP8_STACK_OFFSET) >= (CHIP8_STACK_DEPTH * 2))
-		{
-			return ENOMEM;
-		}
-
-		printf("Calling 0x%x, return address 0x%x\n", CHIP8_ADDR_OPERAND(opcode), chip8->PC);
-
-		CHIP8_PUSH(chip8, chip8->PC & 0x00FF);
-		CHIP8_PUSH(chip8, (chip8->PC & 0xFF00) >> 8);
-*/
 		printf("Calling 0x%x, return address 0x%x\n", CHIP8_ADDR_OPERAND(opcode), chip8->PC);
 		chip8->call_stack[++chip8->SP] = chip8->PC;
 		chip8->PC = CHIP8_ADDR_OPERAND(opcode);

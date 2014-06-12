@@ -92,26 +92,11 @@ void update_texture(void)
 // glut display and idle handler
 void display(void)
 {
-/*
-	int error = chip8_tick(&g_state);
-	if (error)
-	{
-		uint16_t opcode = (uint16_t)(g_state.mem[g_state.PC - 2] << 8) | (g_state.mem[g_state.PC - 1]);
-		printf("Execution exception at 0x%x (0x%x): %s\n", g_state.PC, opcode, strerror(error));
-		exit(error);
-	}
-
-	if(g_state.video_update > 0)
-	{
-*/
-		// Clear framebuffer
-		glClear(GL_COLOR_BUFFER_BIT);
-		update_texture();
-
-		glutSwapBuffers();    
-
-		g_state.video_update = 0;
-//	}
+	// Clear framebuffer
+	glClear(GL_COLOR_BUFFER_BIT);
+	update_texture();
+	glutSwapBuffers();    
+	g_state.video_update = 0;
 }
 
 // 
@@ -137,14 +122,10 @@ void reshape_window(GLsizei w, GLsizei h)
 {
 	glClearColor(0.0f, 0.0f, 0.5f, 0.0f);
 	glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(0, w, h, 0);        
-    glMatrixMode(GL_MODELVIEW);
-    glViewport(0, 0, w, h);
-
-	// Resize quad
-	//display_width = w;
-	//display_height = h;
+    	glLoadIdentity();
+    	gluOrtho2D(0, w, h, 0);        
+    	glMatrixMode(GL_MODELVIEW);
+    	glViewport(0, 0, w, h);
 }
 
 static char g_key_map[CHIP8_TOTAL_KEYS] = 
@@ -258,12 +239,12 @@ int main(int argc, char** argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 
 	glutInitWindowSize(CHIP8_screen_width, CHIP8_screen_height);
-    glutInitWindowPosition(320, 320);
+	glutInitWindowPosition(320, 320);
 	glutCreateWindow("soft-chip8");
 	
 	glutDisplayFunc(display);
 	glutIdleFunc(tick);
-    glutReshapeFunc(reshape_window);        
+    	glutReshapeFunc(reshape_window);        
 	glutKeyboardFunc(keyboardDown);
 	glutKeyboardUpFunc(keyboardUp); 
 

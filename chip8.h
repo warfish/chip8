@@ -27,26 +27,26 @@
 #define CHIP8_RAM_SIZE		(CHIP8_STACK_OFFSET - CHIP8_RAM_OFFSET)
 
 // Depth of call stack
-#define CHIP8_STACK_DEPTH 16
+#define CHIP8_STACK_DEPTH 	16
 
 // Index of the VX register that doubles as carry flag
-#define CHIP8_VF 15
+#define CHIP8_VF 		15
 
 // Size of a single chip8 opcode
-#define CHIP8_OPCODE_SIZE sizeof(uint16_t)
+#define CHIP8_OPCODE_SIZE 	sizeof(uint16_t)
 
 // PC start address
-#define CHIP8_INIT_PC 0x200
+#define CHIP8_INIT_PC 		0x200
 
 // Video resolution 64 x 32
-#define CHIP8_VIDEO_WIDTH 		64
-#define CHIP8_VIDEO_HEIGHT 		32
+#define CHIP8_VIDEO_WIDTH 	64
+#define CHIP8_VIDEO_HEIGHT 	32
 #define CHIP8_VIDEO_MEM_SIZE	(CHIP8_VIDEO_HEIGHT * (CHIP8_VIDEO_WIDTH >> 3)) // Video mem size in bytes
 
 // Font resolution 4 x 5
-#define CHIP8_FONT_WIDTH		4
-#define CHIP8_FONT_HEIGHT		5
-#define CHIP8_FONT_BYTES		CHIP8_FONT_HEIGHT			
+#define CHIP8_FONT_WIDTH	4
+#define CHIP8_FONT_HEIGHT	5
+#define CHIP8_FONT_BYTES	CHIP8_FONT_HEIGHT			
 
 // Input keys
 #define CHIP8_KEY_0 0
@@ -68,7 +68,7 @@
 #define CHIP8_TOTAL_KEYS 16
 
 // Mark/clear/check input key as pressed
-#define CHIP8_MARK_KEY(__state__, __key__) 			((__state__) |= (1 << (__key__)))
+#define CHIP8_MARK_KEY(__state__, __key__) 		((__state__) |= (1 << (__key__)))
 #define CHIP8_CLEAR_KEY(__state__, __key__) 		((__state__) &= ~(1 << (__key__)))
 #define CHIP8_IS_KEY_MARKED(__state__, __key__) 	(((__state__) & (1 << (__key__))) != 0)
 
@@ -77,7 +77,7 @@
 struct chip8_t
 {
 	uint8_t V[16];	// 16 general purpose registers, CHIP8_VF doubles as a carry flag
-	uint16_t I;		// Special address register
+	uint16_t I;	// Special address register
 	uint16_t PC;	// Program counter
 	uint16_t SP;	// Stack pointer
 
@@ -91,6 +91,7 @@ struct chip8_t
 
 	uint8_t video_mem[CHIP8_VIDEO_HEIGHT][CHIP8_VIDEO_WIDTH];	// 
 	uint16_t call_stack[CHIP8_STACK_DEPTH];
+
 	// Below are flags for the client 
 	int video_update; 		// Video memory has been updated a number of times. Throw this flag when you've seen it
 };
